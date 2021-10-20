@@ -1,0 +1,37 @@
+name: smth
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6.13
+  - av=8.0.3
+  - backcall=0.2.0
+  - bleach=4.0.0
+  - cffi=1.14.6
+  - cudatoolkit=11.2.0
+  - decorator=5.1.0
+  - entrypoints=0.3
+  - ipywidgets=7.6.5
+  - libiconv=1.15
+  - libedit=3.1.*
+  - jedi=0.18.0
+  - jupyterlab=3.2.0
+  - matplotlib=3.3.4
+  - mkl=2020.2
+  - mkl_fft=1.3.0
+  - nccl=2.10.3.1
+  - ninja=1.10.2
+  - notebook=6.3.0
+  - pandoc=2.12
+  - qtconsole=5.1.1
+  - scipy=1.5.2
+  - scikit-learn=0.24.2
+variables:
+  CUDNN_INCLUDE_DIR: /opt/cudnn/include
+  CUDNN_LIBRARY: /opt/cudnn/lib64
+  CUDNN_ROOT: /opt/cudnn
+  LD_LIBRARY_PATH: /opt/cuda-11.2/lib64:/opt/cudnn/lib64
+  LD_RUN_PATH: /opt/cuda-11.2/bin
+  PYTHONPATH: /scratch/cluster/liaojh/miniconda3/envs/smth/lib/python3.6/site-packages
+prefix: /scratch/cluster/liaojh/miniconda3/envs/smth
+

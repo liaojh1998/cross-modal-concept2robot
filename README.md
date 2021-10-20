@@ -22,9 +22,9 @@ Performance of pre-trained model on **validation set**:
 - Clone this repo and https://github.com/jacobgil/pytorch-grad-cam (for obtaining saliency maps see [section](#grad-cam) for more details
 
 - Move into this repo's root directory
-- Setup python environment - `conda env update`
+- Setup python environment - `./env/install.sh`
    - This will setup an environment named - `smth`
-- Activate python environment - `source activate smth`
+- Activate python environment - `conda activate smth`
 
 
 

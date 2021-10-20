@@ -117,5 +117,12 @@ dependencies:
     - opencv-python==3.4.3.18
     - scikit-video==1.1.11
     - torch==0.4.1
-prefix: /home/rgoyal/miniconda3/envs/smth
+variables:
+  CUDNN_INCLUDE_DIR: /opt/cudnn/include
+  CUDNN_LIBRARY: /opt/cudnn/lib64
+  CUDNN_ROOT: /opt/cudnn
+  LD_LIBRARY_PATH: /opt/cuda-11.2/lib64:/opt/cudnn/lib64
+  LD_RUN_PATH: /opt/cuda-11.2/bin
+  PYTHONPATH: /scratch/cluster/liaojh/miniconda3/envs/smth/lib/python3.6/site-packages
+prefix: /scratch/cluster/liaojh/miniconda3/envs/smth
 

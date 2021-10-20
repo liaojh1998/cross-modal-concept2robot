@@ -32,6 +32,6 @@ variables:
   CUDNN_ROOT: /opt/cudnn
   LD_LIBRARY_PATH: /opt/cuda-11.2/lib64:/opt/cudnn/lib64
   LD_RUN_PATH: /opt/cuda-11.2/bin
-  PYTHONPATH: /scratch/cluster/liaojh/miniconda3/envs/smth/lib/python3.6/site-packages
-prefix: /scratch/cluster/liaojh/miniconda3/envs/smth
+  PYTHONPATH: /scratch/cluster/{username}/miniconda3/envs/smth/lib/python3.6/site-packages
+prefix: /scratch/cluster/{username}/miniconda3/envs/smth
 

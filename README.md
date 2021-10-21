@@ -1,7 +1,10 @@
 # Cross Modal Transformers for Concept2Robot
 Jay Liao (jl64465) and Shivang Singh (ss82789)
 
-# Environment Setup
+## Previous Work
+You can find the previous Concept2Robot README at [README_C2R.md](README_C2R.md).
+
+## Environment Setup
 1. Login to `eldar-11.cs.utexas.edu`.
 2. Download the latest miniconda into your scratch space on Condor:
 ```

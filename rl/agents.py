@@ -166,11 +166,11 @@ class Agent(object):
 
     index2 = index1 + self.params.traj_timesteps * self.params.a_dim
     b_gt_traj = bt[:, index1 : index2]
-    
+
     index3 = index2 + self.params.state_dim
     bs = bt[:, index2: index3]
-     
-    index4 = index3 + self.params.a_dim * self.params.traj_timesteps + self.params.a_dim 
+
+    index4 = index3 + self.params.a_dim * self.params.traj_timesteps + self.params.a_dim
     ba = bt[:, index3: index4]
 
     index5 = index4 + 1
@@ -181,7 +181,7 @@ class Agent(object):
 
     index7 = index6 + self.params.task_dim
     btask = bt[:, index6: index7]
-    
+
     index8 = index7 + self.params.a_dim
     ba_gt = bt[:, index7: index8]
 
@@ -191,13 +191,13 @@ class Agent(object):
     state = torch.FloatTensor(state).to(self.device)
     action = ba.copy().reshape((self.params.batch_size,-1))
     action_gt = ba_gt.copy().reshape((self.params.batch_size,-1))
-    
+
     if not self.params.force_term:
       action = action[:,:self.params.a_dim]
 
     action = torch.FloatTensor(action).to(self.device)
     action_gt = torch.FloatTensor(action_gt).to(self.device)
-    
+
     task_vec = btask.copy().reshape((-1,self.params.task_dim))
     task_vec = torch.FloatTensor(task_vec).to(self.device)
     reward = br.copy().reshape((self.params.batch_size,-1))
@@ -216,7 +216,7 @@ class Agent(object):
     self.params.writer.add_scalar('train_critic/current_Q',current_q.mean(), self.step)
     self.params.writer.add_scalar('train_critic/reward_max',reward.max(), self.step)
     self.params.writer.add_scalar('train_critic/current_Q_max',current_q.max(), self.step)
-     
+
     # optimize the critic
     if not self.params.force_term:
       self.critic_goal_only_optimizer.zero_grad()
@@ -386,7 +386,7 @@ class Agent(object):
   def cem_evaluate(self, mean, state, task_vec):
     pop_size = len(mean)
     actions = torch.FloatTensor(mean).to(self.device)
-    states = state.repeat(pop_size, 1, 1, 1) 
+    states = state.repeat(pop_size, 1, 1, 1)
     task_vecs = task_vec.repeat(pop_size, 1)
     print("states",states.size(),"actions",actions.size(),"task_vecs",task_vecs.size())
     Qs = self.critic(states, task_vecs, actions)

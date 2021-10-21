@@ -47,10 +47,10 @@ class Robot:
        self.resources_dir = os.path.join(self.opti.project_dir, 'resources')
        self.urdf_dir = os.path.join(self.resources_dir,'urdf')
        model_path = os.path.join(self.opti.project_dir, "resources/urdf/franka_panda/panda_robotiq_updated.urdf")
- 
+
        #model_path = os.path.join(self.urdf_dir,"panda_robotiq.urdf")
        print("model_path",model_path)
-       self.robotId = self.p.loadURDF(model_path, [0, 0, 0], useFixedBase=True, flags=self.p.URDF_USE_SELF_COLLISION and self.p.URDF_USE_SELF_COLLISION_INCLUDE_PARENT) 
+       self.robotId = self.p.loadURDF(model_path, [0, 0, 0], useFixedBase=True, flags=self.p.URDF_USE_SELF_COLLISION and self.p.URDF_USE_SELF_COLLISION_INCLUDE_PARENT)
        self.p.resetBasePositionAndOrientation(self.robotId, [0, 0, 0], [0, 0, 0, 1])
 
        self.targetVelocities = [0] * self.num_controlled_joints
@@ -67,8 +67,8 @@ class Robot:
             if jointIndex in self.activeGripperJointIndexList:
                 self.gripperLowerLimitList.append(jointInfo[8])
                 self.gripperUpperLimitList.append(jointInfo[9])
- 
-    def reset(self): 
+
+    def reset(self):
         ####### Set Dynamic Parameters for the gripper pad######
         friction_ceof = 1000.0
         self.p.changeDynamics(self.robotId, self.gripper_left_tip_index, lateralFriction=friction_ceof)
@@ -119,7 +119,7 @@ class Robot:
         right_tip_pos = self.p.getLinkState(self.robotId, self.gripper_right_tip_index)[0]
         gripper_tip_pos = 0.5 * np.array(left_tip_pos) + 0.5 * np.array(right_tip_pos)
         return gripper_tip_pos
-   
+
     def positionControl(self,pos,orn=None,null_pose=None,gripperPos=None):
         if null_pose is None and orn is None:
             jointPoses = self.p.calculateInverseKinematics(self.robotId, self.endEffectorIndex, pos,
@@ -139,7 +139,7 @@ class Robot:
                                                       upperLimits=self.ul,
                                                       jointRanges=self.jr,
                                                       restPoses=null_pose)[:self.num_controlled_joints]
-      
+
         else:
             jointPoses = self.p.calculateInverseKinematics(self.robotId, self.endEffectorIndex, pos, orn,
                                                       lowerLimits=self.ll,
@@ -235,9 +235,9 @@ class Robot:
       angle = jointInfo[0]
       angle = (angle - self.gripperLowerLimitList[-1]) / (self.gripperUpperLimitList[-1]-self.gripperLowerLimitList[-1]) * 255.0
       return angle
-    
+
     def gripperControl(self,gripperPos):
-        self.gripperOpen = 1.0 - gripperPos/255.0 
+        self.gripperOpen = 1.0 - gripperPos/255.0
         self.gripperPos = np.array(self.gripperUpperLimitList) * (1 - self.gripperOpen) + np.array(self.gripperLowerLimitList) * self.gripperOpen
         self.gripperPos = self.gripperPos.tolist()
         gripperForce = [self.gripperMaxForce] * len(self.activeGripperJointIndexList)

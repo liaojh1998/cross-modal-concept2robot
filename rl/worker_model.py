@@ -23,8 +23,8 @@ PROJECT_DIR = os.path.join(BASE_DIR,'../')
 sys.path.insert(0,DMP_DIR)
 from ddmp import DDMP as DMP
 
-sim_DIR = os.path.join(BASE_DIR, "../external/bullet3_default/")
-sys.path.insert(0,os.path.join(sim_DIR,'bullet3/build_cmake/examples/pybullet'))
+sim_DIR = os.path.join(BASE_DIR, "../external/")
+sys.path.insert(0,os.path.join(sim_DIR, 'bullet3/build_cmake/examples/pybullet'))
 import pybullet
 
 import bullet_client as bc
@@ -321,7 +321,7 @@ class Worker(object):
                 if total_episode < self.params.start_learning_episode:
                     goal_pred, _ = self.agent.choose_action(observation, self.task_vec)
                     goal_pred_goal_only = goal_pred
-                    force_pred = np.random.uniform(-1.0, 1.0, size=(self.params.traj_timesteps, self.params.a_dim)) 
+                    force_pred = np.random.uniform(-1.0, 1.0, size=(self.params.traj_timesteps, self.params.a_dim))
                     weights = np.linspace(1, 0, self.params.traj_timesteps).reshape((self.params.traj_timesteps, 1)) * float(self.params.traj_timesteps)
                     force_pred = force_pred * weights
                 else:

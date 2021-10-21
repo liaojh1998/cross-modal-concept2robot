@@ -4,3 +4,6 @@ torchaudio==0.9.1
 torchtext==0.10.1
 scikit-video==1.1.11
 opencv-python==4.5.3.56
+tensorboardx==2.4
+pybullet=3.0.6
+sh==1.14.2

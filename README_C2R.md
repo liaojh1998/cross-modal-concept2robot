@@ -44,9 +44,7 @@ conda env create -f environment.yml
 conda activate concept2robot
 ```
 
-5. Download [data](http://download.cs.stanford.edu/juno/Concept2Robot/data.zip), [models](http://download.cs.stanford.edu/juno/Concept2Robot/models.zip) folders into `ConceptManipulation` directory.
-
-6. Run the code
+5. Run the code
 ```
 cd rl; bash train_5.sh
 ```

@@ -26,7 +26,7 @@ try:
     from .utils_env import get_view,safe_path,cut_frame,point2traj,get_gripper_pos,backup_code
     from .robot import Robot
 except Exception:
-    from utils_env import get_view,safe_path,cut_frame,point2traj,get_gripper_pos,backup_code   
+    from utils_env import get_view,safe_path,cut_frame,point2traj,get_gripper_pos,backup_code
     from robot import Robot
 
 #################################
@@ -40,7 +40,7 @@ import re
 import torch.nn.functional as F
 
 np.set_printoptions(precision=4,suppress=True,linewidth=300)
-sys.path.insert(0,"../external/something-something-v2-baseline.git")
+sys.path.insert(0,"../models/something-something-v2-baseline")
 sys.path.insert(0,"../classification/image")
 sys.path.insert(0,"../../")
 
@@ -70,8 +70,8 @@ class Engine:
         self.classifier = opti.classifier
         if self.classifier == 'video':
           print("printting video")
-#          self.config = load_json_config("../../models/something-something-v2-baseline/configs/config_model1.json")
-          self.config = load_json_config("../models/something-something-v2-baseline/configs/config_model1_left_right.json")
+#          self.config = load_json_config("../models/something-something-v2-baseline/configs/pretrained/config_model1.json")
+          self.config = load_json_config("../models/something-something-v2-baseline/configs/pretrained/config_model1_left_right.json")
         elif self.classifier == 'image':
           # load configurations
           self.config = load_json_config("../classification/image/configs/config_resnet.json")
@@ -158,7 +158,7 @@ class Engine:
 
     def load_model(self):
         if self.classifier == 'video':
-            save_dir =  os.path.join("../models/something-something-v2-baseline/pretrained/model3D_1_left_right/")
+            save_dir =  os.path.join("../models/something-something-v2-baseline/trained_models/pretrained/model3D_1_left_right/")
             print("save_dir",save_dir)
         elif self.classifier == 'trn_video':
             save_dir =  "/juno/u/lins2/TRN-pytorch"
@@ -188,7 +188,7 @@ class Engine:
         elif self.classifier == "trn_video":
           sys.path.insert(0,'/juno/u/lins2/TRN-pytorch/')
           from models import TSN
-          model = TSN(self.config['num_classes'], 
+          model = TSN(self.config['num_classes'],
                             num_segments=1,
                             modality='RGB',
                             base_model='BNInception',
@@ -305,7 +305,7 @@ class Engine:
         self.data_q = np.load(os.path.join(self.configs_dir, 'init', 'q.npy'))
         self.data_dq = np.load(os.path.join(self.configs_dir, 'init', 'dq.npy'))
         self.data_gripper = np.load(os.path.join(self.configs_dir, 'init', 'gripper.npy'))
-       
+
     def init_plane(self):
         self.plane_id = self.p.loadURDF(os.path.join(self.resources_dir, 'urdf', 'plane.urdf'),
                                         [0.7, 0, 0], [0, 0, -math.pi * 0.02, 1], globalScaling=0.7)
@@ -375,7 +375,7 @@ class Engine:
         if self.opti.object_id == 'nut':
             self.p.resetBasePositionAndOrientation(self.obj_id,self.obj_position,self.obj_orientation)
 
-       
+
     def run(self):
         for i in range(self.data_q.shape[0]):
             jointPoses = self.data_q[i]
@@ -417,7 +417,7 @@ class Engine:
         pos_traj = np.load(os.path.join(self.config_dir, 'init', 'pos.npy'))
         orn_traj = np.load(os.path.join(self.config_dir, 'init', 'orn.npy'))
         self.fix_orn = np.load(os.path.join(self.config_dir, 'init', 'orn.npy'))
- 
+
         for j in range (7):
             self.p.resetJointState(self.robotId, j, self.data_q[0][j], self.data_dq[0][j])
 
@@ -526,8 +526,8 @@ class Engine:
         self.init_grasp ()
         self.reset_obs_list()
         self.real_traj_list = []
-        self.obs_list = [] 
-        observation = self.get_observation()      
+        self.obs_list = []
+        observation = self.get_observation()
         self.env_step = 0
         return observation
 
@@ -685,7 +685,7 @@ class Engine:
         self.obs_list.append(img)
 
         if segFlag:
-            seg = img_info[4] 
+            seg = img_info[4]
             return img, seg
         else:
             return img
@@ -748,7 +748,7 @@ class Engine:
         else:
           reward = 0.0
         return reward
- 
+
     def get_tsm_video_reward(self, taskId=None):
         if taskId is None:
           taskId = self.taskId
@@ -771,8 +771,8 @@ class Engine:
         reward = output[taskId] * 174.0 - 2.0
         reward = 1. / (1. + np.exp(-reward))
         return reward
- 
-    def taskColliDet(self): 
+
+    def taskColliDet(self):
         return False
 
     def get_reward (self,seg=None):

@@ -4,13 +4,13 @@
 
     "input_mode": "av",
 
-    "data_folder": "data/20bn-something-something-v2/videos/",
+    "data_folder": "../data/20bn-something-something-v2/videos/",
 
-    "json_data_train": "data/20bn-something-something-v2/annotations/something-something-v2-train.json",
-    "json_data_val": "data/20bn-something-something-v2/annotations/something-something-v2-validation.json",
-    "json_data_test": "data/20bn-something-something-v2/annotations/something-something-v2-test.json",
+    "json_data_train": "../data/20bn-something-something-v2/annotations/something-something-v2-train.json",
+    "json_data_val": "../data/20bn-something-something-v2/annotations/something-something-v2-validation.json",
+    "json_data_test": "../data/20bn-something-something-v2/annotations/something-something-v2-test.json",
 
-    "json_file_labels": "data/20bn-something-something-v2/annotations/something-something-v2-labels.json",
+    "json_file_labels": "../data/20bn-something-something-v2/annotations/something-something-v2-labels.json",
     
     "num_workers": 8,
 
@@ -27,7 +27,7 @@
     "step_size_train": 1,
     "step_size_val": 1,
 
-    "augmentation_mappings_json": "assets/augmentation_mappings.json",
+    "augmentation_mappings_json": "../models/something-something-v2-baseline/assets/augmentation_mappings.json",
     "augmentation_types_todo": ["left/right", "left/right agnostic", "jitter_fps"],
 
     "lr": 0.01,

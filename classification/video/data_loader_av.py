@@ -107,10 +107,10 @@ if __name__ == '__main__':
                         [torchvision.transforms.ToTensor(), "img"],
                          ])
 
-    top_dir = '/scr-ssd/ConceptManipulation/Data'
+    top_dir = '../data/20bn-something-something-v2'
     loader = VideoFolder(root=os.path.join(top_dir,"videos"),
-                         json_file_input=os.path.join(top_dir,"captions","something-something-v2-train.json"),
-                         json_file_labels=os.path.join(top_dir,"captions","something-something-v2-labels.json"),
+                         json_file_input=os.path.join(top_dir,"annotations","something-something-v2-train.json"),
+                         json_file_labels=os.path.join(top_dir,"annotations","something-something-v2-labels.json"),
                          clip_size=36,
                          nclips=1,
                          step_size=1,

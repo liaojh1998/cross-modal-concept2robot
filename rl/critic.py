@@ -73,6 +73,8 @@ class Critic(nn.Module):
     task_feat = F.relu(self.task_feat_block2(task_feat))
     task_feat = F.relu(self.task_feat_block3(task_feat))
 
+    print("critic called!!", action.shape)
+
     action_feat = F.relu(self.action_feat_block1(action))
     action_feat = F.relu(self.action_feat_block2(action_feat))
     action_feat = F.relu(self.action_feat_block3(action_feat))

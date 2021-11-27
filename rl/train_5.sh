@@ -2,8 +2,10 @@ python3 run.py\
         --task_id 5\
         --exp_name "without_force_goal_only"\
         --gui \
+	--recordGif\
         --stage train\
         --batch_size 64\
         --action_penalty 0.2\
         --start_learning_episode 1000\
+	--force_term \
         --comment "action_penalty_0.2_critic_goal_only"

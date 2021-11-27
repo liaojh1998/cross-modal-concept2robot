@@ -23,8 +23,8 @@ PROJECT_DIR = os.path.join(BASE_DIR,'../')
 sys.path.insert(0,DMP_DIR)
 from ddmp import DDMP as DMP
 
-sim_DIR = os.path.join(BASE_DIR, "../external/")
-sys.path.insert(0,os.path.join(sim_DIR, 'bullet3/build_cmake/examples/pybullet'))
+sim_DIR = os.path.join(BASE_DIR, "../external/bullet3_default/")
+sys.path.insert(0,os.path.join(sim_DIR,'bullet3/build_cmake/examples/pybullet'))
 import pybullet
 
 import bullet_client as bc
@@ -36,6 +36,7 @@ import torch.nn.functional as F
 
 from torchvision import transforms
 from scipy.special import softmax
+from tqdm import tqdm
 
 #####
 from agents import Agent
@@ -151,6 +152,9 @@ class Worker(object):
 
 
     def train(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
+      
+        
+      #restore_path = "/srv/data/Concept2Robot/save_dir/112_something_onto_something_without_force_goal_only/rl_action_penalty_0.2_critic_goal_only_2021-11-25_19-28-25"
       if self.params.force_term:
         self.train_force(restore_episode=restore_episode, restore_path=restore_path, restore_episode_goal=restore_episode_goal, restore_path_goal=restore_path_goal)
       else:
@@ -170,7 +174,7 @@ class Worker(object):
 
         print("total_episode", total_episode, "var", explore_var)
 
-        for ep_iter in range(1, self.params.max_ep):
+        for ep_iter in tqdm(range(1, self.params.max_ep + 1)):
             observation = self.env.reset()
             observation = np.reshape(observation, (-1,))
 
@@ -286,6 +290,9 @@ class Worker(object):
 
     def train_force(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
         print("restiore_episode_goal",restore_episode_goal)
+        
+        print("here restore path", restore_path)        
+        
         self.agent.restore_actor_goal_only(step=restore_episode_goal, restore_path=restore_path_goal)
         self.agent.restore_actor(step=restore_episode_goal, restore_path=restore_path_goal)
         #self.agent.memory = np.load('memeory.npy')
@@ -309,7 +316,7 @@ class Worker(object):
 
         print("total_episode", total_episode, "var", explore_var)
 
-        for ep_iter in range(1, self.params.max_ep):
+        for ep_iter in tqdm(range(1, self.params.max_ep + 1)):
             observation = self.env.reset()
             observation = np.reshape(observation, (-1,))
 
@@ -475,7 +482,7 @@ class Worker(object):
             max_iteration = self.params.max_ep_imitation
             self.task_vec = np.load("../Languages/"+str(self.TaskId)+'.npy')
 
-        for ep_iter in range(max_iteration):
+        for ep_iter in tqdm(range(max_iteration)):
             observation = self.env.reset()
             observation = np.reshape(observation, (-1,))
             observation_init = np.copy(observation)
@@ -533,16 +540,17 @@ class Worker(object):
                                                         done, self.task_vec, self.saving_data_dir)
                 if done:
                     total_suc += float(suc)
-                    ### whether to generated gif
-                    recordGif = self.params.recordGif
-                    if recordGif:
-                        classes = [line.strip().split(":")[0] for line in open('../Languages/labels.txt')]
-                        recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id))
-                        if not os.path.exists(recordGif_dir):
-                            os.makedirs(recordGif_dir)
-                        imageio.mimsave(os.path.join(recordGif_dir, str(self.params.task_id) + '_' + str(ep_) + '.gif'),
-                                        self.env.obs_list)
                     break
+
+        ### whether to generated gif
+        recordGif = self.params.recordGif
+        if recordGif:
+            #classes = [line.strip().split(":")[0] for line in open('../Languages/labels.txt')]
+            recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id))
+            if not os.path.exists(recordGif_dir):
+                os.makedirs(recordGif_dir)
+            imageio.mimsave(os.path.join(recordGif_dir, str(self.params.task_id) + '_' + str(restore_episode) + '.gif'),
+                            self.env.obs_list)
 
         perf = total_suc / float(max_iteration)
         print("success performance", perf)

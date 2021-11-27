@@ -1,16 +1,16 @@
 {
     "model_name": "model3D_1",
-    "output_dir": "trained_models/pretrained",
+    "output_dir": "/srv/data/cross-modal-concept2robot/models/something-something-v2-baseline/trained_models/pretrained",
 
     "input_mode": "av",
 
-    "data_folder": "data/20bn-something-something-v2/videos/",
+    "data_folder": "/srv/data/20bn-something-something-v2/videos/",
 
-    "json_data_train": "data/20bn-something-something-v2/annotations/something-something-v2-train.json",
-    "json_data_val": "data/20bn-something-something-v2/annotations/something-something-v2-validation.json",
-    "json_data_test": "data/20bn-something-something-v2/annotations/something-something-v2-test.json",
+    "json_data_train": "/srv/data/20bn-something-something-v2/annotations/something-something-v2-train.json",
+    "json_data_val": "/srv/data/20bn-something-something-v2/annotations/something-something-v2-validation.json",
+    "json_data_test": "/srv/data/20bn-something-something-v2/annotations/something-something-v2-test.json",
 
-    "json_file_labels": "data/20bn-something-something-v2/annotations/something-something-v2-labels.json",
+    "json_file_labels": "/srv/data/20bn-something-something-v2/annotations/something-something-v2-labels.json",
 
     "num_workers": 5,
 

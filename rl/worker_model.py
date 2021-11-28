@@ -23,8 +23,8 @@ PROJECT_DIR = os.path.join(BASE_DIR,'../')
 sys.path.insert(0,DMP_DIR)
 from ddmp import DDMP as DMP
 
-sim_DIR = os.path.join(BASE_DIR, "../external/bullet3_default/")
-sys.path.insert(0,os.path.join(sim_DIR,'bullet3/build_cmake/examples/pybullet'))
+sim_DIR = os.path.join(BASE_DIR, "../external")
+sys.path.insert(0,os.path.join(sim_DIR, 'bullet3/build_cmake/examples/pybullet'))
 import pybullet
 
 import bullet_client as bc
@@ -152,8 +152,8 @@ class Worker(object):
 
 
     def train(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
-      
-        
+
+
       #restore_path = "/srv/data/Concept2Robot/save_dir/112_something_onto_something_without_force_goal_only/rl_action_penalty_0.2_critic_goal_only_2021-11-25_19-28-25"
       if self.params.force_term:
         self.train_force(restore_episode=restore_episode, restore_path=restore_path, restore_episode_goal=restore_episode_goal, restore_path_goal=restore_path_goal)
@@ -290,9 +290,9 @@ class Worker(object):
 
     def train_force(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
         print("restiore_episode_goal",restore_episode_goal)
-        
-        print("here restore path", restore_path)        
-        
+
+        print("here restore path", restore_path)
+
         self.agent.restore_actor_goal_only(step=restore_episode_goal, restore_path=restore_path_goal)
         self.agent.restore_actor(step=restore_episode_goal, restore_path=restore_path_goal)
         #self.agent.memory = np.load('memeory.npy')

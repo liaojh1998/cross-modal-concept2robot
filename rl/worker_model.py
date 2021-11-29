@@ -537,18 +537,19 @@ class Worker(object):
                     self.agent.store_transition_locally(initial_pose, traj_real, observation_init, action_pred, reward,
                                                         done, self.task_vec, self.saving_data_dir)
                 if done:
+                    if suc:
+                        ### whether to generated gif
+                        recordGif = self.params.recordGif
+                        if recordGif:
+                            #classes = [line.strip().split(":")[0] for line in open('../Languages/labels.txt')]
+                            recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id))
+                            if not os.path.exists(recordGif_dir):
+                                os.makedirs(recordGif_dir)
+                            imageio.mimsave(os.path.join(recordGif_dir, str(self.params.task_id) + '_' + self.params.model_type + '_' + str(restore_episode) + f'_ep{ep_iter}.gif'),
+                                            self.env.obs_list)
+
                     total_suc += float(suc)
                     break
-
-        ### whether to generated gif
-        recordGif = self.params.recordGif
-        if recordGif:
-            #classes = [line.strip().split(":")[0] for line in open('../Languages/labels.txt')]
-            recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id))
-            if not os.path.exists(recordGif_dir):
-                os.makedirs(recordGif_dir)
-            imageio.mimsave(os.path.join(recordGif_dir, str(self.params.task_id) + '_' + str(restore_episode) + '.gif'),
-                            self.env.obs_list)
 
         perf = total_suc / float(max_iteration)
         print("success performance", perf)

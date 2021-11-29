@@ -26,18 +26,40 @@ def set_init(layers):
     nn.init.constant_(layer.bias, 0.)
 
 class Actor(nn.Module):
-  def __init__(self, state_dim, action_dim, task_dim, max_action, params):
+  def __init__(self, model_type, state_dim, action_dim, task_dim, max_action, params):
     super(Actor, self).__init__()
     self.params = params
-    self.model = models.resnet18(pretrained=True) 
+
+    print(f"initiating actor with model: {model_type}")
+    if model_type == "resnet18":
+      self.model = models.resnet18(pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=512,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    elif model_type == "resnet50":
+      self.model = models.resnet50(pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=2048,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    elif model_type == "virtex":
+      self.model = torch.hub.load("kdexd/virtex", "resnet50", pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=2048,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    else:
+      raise NotImplementedError(f"{model_type} model is not implemented yet")
+
     self.action_dim = action_dim
     self.max_action = max_action
-    self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])  
-    self.img_feat_block1 = nn.Sequential(
-      nn.Conv2d(in_channels=512,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
-      nn.ReLU(),
-      nn.BatchNorm2d(256),
-    )
     self.img_feat_block2 = nn.Linear(256 * 2 * 3, 256)
 
     self.task_feat_block1 = nn.Linear(1024, 512)
@@ -84,15 +106,15 @@ class Actor(nn.Module):
 
   def forward(self, state, task_vec, training=False):
     bs = state.size(0)
-    img_feat = self.feature_extractor(state) 
+    img_feat = self.feature_extractor(state)
     img_feat = self.img_feat_block1(img_feat)
     img_feat = img_feat.view(-1,256 * 2 * 3)
-    img_feat = self.img_feat_block2(img_feat) 
+    img_feat = self.img_feat_block2(img_feat)
 
     task_feat = F.relu(self.task_feat_block1(task_vec))
     task_feat = F.relu(self.task_feat_block2(task_feat))
     task_feat = F.relu(self.task_feat_block3(task_feat))
-   
+
     action_feat_raw = torch.cat([img_feat,task_feat],-1)
 
     ### generate goal
@@ -123,7 +145,7 @@ class Actor(nn.Module):
     weights = torch.FloatTensor(weights).to("cuda")
     force = weights * force
 
-    print("training is", training)
+    #print("training is", training)
 
     if training:
       force = force.reshape((bs,-1))
@@ -131,4 +153,3 @@ class Actor(nn.Module):
       return action
     else:
       return goal, force
-

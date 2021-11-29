@@ -28,25 +28,50 @@ def set_init(layers):
 
 
 class Critic(nn.Module):
-  def __init__(self, state_dim, action_dim, task_dim, max_action, params):
+  def __init__(self, model_type, state_dim, action_dim, task_dim, max_action, params, goal_only=False):
     super(Critic, self).__init__()
     self.params = params
-    self.model = models.resnet18(pretrained=True)
+
+    print(f"initiating critic with model: {model_type}")
+    if model_type == "resnet18":
+      self.model = models.resnet18(pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=512,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    elif model_type == "resnet50":
+      self.model = models.resnet50(pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=2048,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    elif model_type == "virtex":
+      self.model = torch.hub.load("kdexd/virtex", "resnet50", pretrained=True)
+      self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
+      self.img_feat_block1 = nn.Sequential(
+        nn.Conv2d(in_channels=2048,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
+        nn.ReLU(),
+        nn.BatchNorm2d(256),
+      )
+    else:
+      raise NotImplementedError(f"{model_type} model is not implemented yet")
+
     self.action_dim = action_dim
     self.max_action = max_action
-    self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
-    self.img_feat_block1 = nn.Sequential(
-      nn.Conv2d(in_channels=512,out_channels=256,kernel_size=(3,3),stride=(2,2),padding=(1,1),bias=True),
-      nn.ReLU(),
-      nn.BatchNorm2d(256),
-    )
     self.img_feat_block2 = nn.Linear(256 * 2 * 3, 256)
 
     self.task_feat_block1 = nn.Linear(1024, 512)
     self.task_feat_block2 = nn.Linear(512, 256)
     self.task_feat_block3 = nn.Linear(256, 128)
 
-    self.action_feat_block1 = nn.Linear(49 * 7 + 7, 256)
+    if goal_only:
+        self.action_feat_block1 = nn.Linear(7, 256)
+    else:
+        self.action_feat_block1 = nn.Linear(49 * 7 + 7, 256)
 
     self.action_feat_block2 = nn.Linear(256, 256)
     self.action_feat_block3 = nn.Linear(256, 128)
@@ -73,7 +98,7 @@ class Critic(nn.Module):
     task_feat = F.relu(self.task_feat_block2(task_feat))
     task_feat = F.relu(self.task_feat_block3(task_feat))
 
-    print("critic called!!", action.shape)
+    #print("critic called!!", action.shape)
 
     action_feat = F.relu(self.action_feat_block1(action))
     action_feat = F.relu(self.action_feat_block2(action_feat))

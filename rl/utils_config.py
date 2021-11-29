@@ -11,6 +11,7 @@ def load_args():
     parser.add_argument('--comment',default="", type=str)
 
     #### model specification
+    parser.add_argument('--model_type', default='resnet18', type=str, choices=['resnet18', 'resnet50', 'virtex', 'swin-tiny'], help='model to use for actor, critic, and master')
     parser.add_argument('--a_dim', default=7, type=int, help='action dimension that our model predicts')
     parser.add_argument('--img_w', default=160, type=int)
     parser.add_argument('--img_h', default=120, type=int)

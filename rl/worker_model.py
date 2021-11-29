@@ -23,7 +23,7 @@ PROJECT_DIR = os.path.join(BASE_DIR,'../')
 sys.path.insert(0,DMP_DIR)
 from ddmp import DDMP as DMP
 
-sim_DIR = os.path.join(BASE_DIR, "../external")
+sim_DIR = os.path.join(BASE_DIR, "../external/")
 sys.path.insert(0,os.path.join(sim_DIR, 'bullet3/build_cmake/examples/pybullet'))
 import pybullet
 
@@ -152,9 +152,6 @@ class Worker(object):
 
 
     def train(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
-
-
-      #restore_path = "/srv/data/Concept2Robot/save_dir/112_something_onto_something_without_force_goal_only/rl_action_penalty_0.2_critic_goal_only_2021-11-25_19-28-25"
       if self.params.force_term:
         self.train_force(restore_episode=restore_episode, restore_path=restore_path, restore_episode_goal=restore_episode_goal, restore_path_goal=restore_path_goal)
       else:
@@ -289,9 +286,10 @@ class Worker(object):
                     break
 
     def train_force(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
-        print("restiore_episode_goal",restore_episode_goal)
-
-        print("here restore path", restore_path)
+        print("restore_episode",restore_episode)
+        print("restore_episode_goal",restore_episode_goal)
+        print("train_force restore path", restore_path)
+        print("train_force restore path goal", restore_path_goal)
 
         self.agent.restore_actor_goal_only(step=restore_episode_goal, restore_path=restore_path_goal)
         self.agent.restore_actor(step=restore_episode_goal, restore_path=restore_path_goal)
@@ -436,7 +434,7 @@ class Worker(object):
                     #np.save("memeory.npy",self.agent.memory)
                     current_performance = float(suc_num) / (episode_num + 0.0001)
                     print("suc rate %f reward %f var %f" % (current_performance, float(reward_check) / (episode_num + 0.0001), explore_var))
-                    print("saving models at step%d" % ep_iter)
+                    print("saving models at step %d" % ep_iter)
                     self.agent.save_model_actor_critic(ep_iter)
                     cur_perf = self.test(ep_iter, restore_episode_goal=restore_episode_goal, restore_path_goal=restore_path_goal)
                     self.writer.add_scalar("test/success_rate", cur_perf, ep_iter)

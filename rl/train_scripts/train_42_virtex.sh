@@ -1,6 +1,6 @@
 python3 run.py\
         --task_id 42\
-        --exp_name "task_42_virtex_goal_only"\
+        --exp_name "virtex_goal_only"\
         --model_type virtex\
         --stage train\
         --recordGif \

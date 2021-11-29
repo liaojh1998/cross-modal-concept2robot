@@ -1,6 +1,6 @@
 python3 run.py\
         --task_id 42\
-        --exp_name "task_42_resnet50_goal_only"\
+        --exp_name "resnet50_goal_only"\
         --model_type resnet50\
         --stage train\
         --recordGif \

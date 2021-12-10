@@ -7,3 +7,6 @@ opencv-python==4.5.3.56
 tensorboardx==2.4
 pybullet=3.0.6
 sh==1.14.2
+ftfy==6.0.3
+regex==2021.11.10
+git+https://github.com/openai/CLIP.git

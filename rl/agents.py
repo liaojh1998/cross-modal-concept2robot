@@ -29,6 +29,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from torchvision import transforms
+from PIL import Image
 
 #####
 from actor import Actor
@@ -115,10 +116,16 @@ class Agent(object):
 
   def choose_action(self, state, task_vec):
     state = state.reshape((-1,120,160,3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
-    task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s.astype('uint8')) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+      task_vec = torch.LongTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
+      task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
     goal_action, force_action = self.actor(state, task_vec)
     goal_action = goal_action.cpu().data.numpy().flatten()
     force_action = force_action.cpu().data.numpy()[0]
@@ -126,19 +133,31 @@ class Agent(object):
 
   def choose_action_goal_only(self, state, task_vec):
     state = state.reshape((-1,120,160,3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
-    task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s.astype('uint8')) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+      task_vec = torch.LongTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
+      task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
     goal_action, _ = self.actor(state, task_vec)
     return goal_action.cpu().data.numpy().flatten()
 
   def choose_action_master(self, state, task_vec):
     state = state.reshape((-1,120,160,3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
-    task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s.astype('uint8')) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+      task_vec = torch.LongTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
+      task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
     goal_action, force_action = self.master(state, task_vec)
     goal_action = goal_action.cpu().data.numpy().flatten()
     force_action = force_action.cpu().data.numpy()[0]
@@ -146,10 +165,16 @@ class Agent(object):
 
   def choose_action_feedback(self, state, task_vec):
     state = state.reshape((-1,120,160,3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
-    task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s.astype('uint8')) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+      task_vec = torch.LongTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
+      task_vec = torch.FloatTensor(task_vec.reshape((-1,self.params.task_dim))).to(self.device)
     assert state.size()[0] == 4 * task_vec.size()[0]
     self.actor_feedback.eval()
     init_action = self.actor_feedback(state, task_vec).cpu().data.numpy().flatten()
@@ -189,9 +214,14 @@ class Agent(object):
     ba_gt = bt[:, index7: index8]
 
     state = bs.copy().reshape((-1,120,160,3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
     action = ba.copy().reshape((self.params.batch_size,-1))
     action_gt = ba_gt.copy().reshape((self.params.batch_size,-1))
 
@@ -202,7 +232,10 @@ class Agent(object):
     action_gt = torch.FloatTensor(action_gt).to(self.device)
 
     task_vec = btask.copy().reshape((-1,self.params.task_dim))
-    task_vec = torch.FloatTensor(task_vec).to(self.device)
+    if self.params.model_type == 'clip':
+        task_vec = torch.LongTensor(task_vec).to(self.device)
+    else:
+        task_vec = torch.FloatTensor(task_vec).to(self.device)
     reward = br.copy().reshape((self.params.batch_size,-1))
     reward = torch.FloatTensor(reward).to(self.device)
 
@@ -303,20 +336,33 @@ class Agent(object):
     bs_next = self.memory_feedback[indices_next, :][:, index1: index2]
 
     state = bs.copy().reshape((-1, 120, 160, 3)).astype(np.uint8)
-    state_list = [transforms(s) for s in state]
-    state = torch.stack(state_list)
-    state = torch.FloatTensor(state).to(self.device)
+    if self.params.model_type == "clip":
+      state_list = [Image.fromarray(s) for s in state]
+      state_list = [self.actor.preprocess(s) for s in state_list]
+      state = torch.stack(state_list).to(self.device)
+    else:
+      state_list = [transforms(s) for s in state]
+      state = torch.stack(state_list)
+      state = torch.FloatTensor(state).to(self.device)
 
     action = ba.copy().reshape((-1, self.params.a_dim))
     action = torch.FloatTensor(action).to(self.device)
 
     state_next = bs_next.copy().reshape((-1, 120, 160, 3)).astype(np.uint8)
-    state_next_list = [transforms(s) for s in state_next]
-    state_next = torch.stack(state_next_list)
-    state_next = torch.FloatTensor(state_next).to(self.device)
+    if self.params.model_type == "clip":
+      state_next_list = [Image.fromarray(s) for s in state_next]
+      state_next_list = [self.actor.preprocess(s) for s in state_next_list]
+      state_next = torch.stack(state_next_list).to(self.device)
+    else:
+      state_next_list = [transforms(s) for s in state_next]
+      state_next = torch.stack(state_next_list)
+      state_next = torch.FloatTensor(state_next).to(self.device)
 
     task_vec = btask.copy().reshape((-1, self.params.task_dim))
-    task_vec = torch.FloatTensor(task_vec).to(self.device)
+    if self.params.model_type == 'clip':
+        task_vec = torch.LongTensor(task_vec).to(self.device)
+    else:
+        task_vec = torch.FloatTensor(task_vec).to(self.device)
 
     reward = br.copy().reshape((-1, 1))
     reward = torch.FloatTensor(reward).to(self.device)
@@ -580,7 +626,10 @@ class Agent(object):
     state = torch.FloatTensor(state).to(self.device)
 
     task_vec = btask.copy().reshape((-1,self.params.task_dim))
-    task_vec = torch.FloatTensor(task_vec).to(self.device)
+    if self.params.model_type == 'clip':
+        task_vec = torch.LongTensor(task_vec).to(self.device)
+    else:
+        task_vec = torch.FloatTensor(task_vec).to(self.device)
 
     for ik in range(1):
       self.imitate_step += 1
@@ -671,7 +720,10 @@ class Agent(object):
     state = torch.FloatTensor(state).to(self.device)
 
     task_vec = btask.copy().reshape((-1,self.params.task_dim))
-    task_vec = torch.FloatTensor(task_vec).to(self.device)
+    if self.params.model_type == 'clip':
+        task_vec = torch.LongTensor(task_vec).to(self.device)
+    else:
+        task_vec = torch.FloatTensor(task_vec).to(self.device)
 
     bgoal = ba[:, :self.params.a_dim]
     bforce = ba[:, self.params.a_dim:].reshape((self.params.batch_size, self.params.traj_timesteps, self.params.a_dim))

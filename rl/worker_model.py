@@ -16,6 +16,7 @@ import imageio
 import math
 from tensorboardX import SummaryWriter
 import datetime
+import clip
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DMP_DIR = os.path.join(BASE_DIR,'../deepTraj')
@@ -148,8 +149,20 @@ class Worker(object):
            RobotEnv = getattr(env_module, "Engine{}".format(self.TaskId))
            self.env = RobotEnv(worker_id=self.wid, opti=self.params, cReward=self.params.video_reward, p_id=self.p_id,
                             taskId=self.TaskId, n_dmps=7)
-           self.task_vec = np.load("../Languages/" + str(self.TaskId) + '.npy')
-
+           if self.params.model_type == 'clip':
+             with open("../Languages/something-something-v2-labels.json", "r") as f:
+               task_texts = json.load(f)
+             self.task_text = ""
+             for text, taskId in task_texts.items():
+               if taskId == str(self.TaskId):
+                 self.task_text = text
+                 break
+             if not self.task_text:
+               raise NotImplementedError(f"Could not find text for task {self.TaskId}.")
+             self.task_vec = clip.tokenize(self.task_text).squeeze(0).numpy()
+             print(f"CLIP text tokens dim: {self.task_vec.shape}")
+           else:
+             self.task_vec = np.load("../Languages/" + str(self.TaskId) + '.npy')
 
     def train(self, restore_episode=0, restore_path=None, restore_episode_goal=0, restore_path_goal=None):
       if self.params.force_term:

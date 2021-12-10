@@ -13,6 +13,7 @@ import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+import clip
 import torchvision.models as models
 import torch
 import torch.nn as nn
@@ -33,6 +34,7 @@ class Critic(nn.Module):
     self.params = params
 
     print(f"initiating critic with model: {model_type}")
+    self.model_type = model_type
     if model_type == "resnet18":
       self.model = models.resnet18(pretrained=True)
       self.feature_extractor = torch.nn.Sequential(*list(self.model.children())[:-2])
@@ -57,12 +59,17 @@ class Critic(nn.Module):
         nn.ReLU(),
         nn.BatchNorm2d(256),
       )
+    elif model_type == 'clip':
+      self.model, self.preprocess = clip.load("ViT-B/32")
     else:
       raise NotImplementedError(f"{model_type} model is not implemented yet")
 
     self.action_dim = action_dim
     self.max_action = max_action
-    self.img_feat_block2 = nn.Linear(256 * 2 * 3, 256)
+    if model_type == "clip":
+      self.img_feat_block2 = nn.Linear(512, 256)
+    else:
+      self.img_feat_block2 = nn.Linear(256 * 2 * 3, 256)
 
     self.task_feat_block1 = nn.Linear(1024, 512)
     self.task_feat_block2 = nn.Linear(512, 256)
@@ -89,12 +96,21 @@ class Critic(nn.Module):
 
   def forward(self, state, task_vec, action):
     bs = state.size(0)
-    img_feat = self.feature_extractor(state)
-    img_feat = self.img_feat_block1(img_feat)
-    img_feat = img_feat.view(-1,256 * 2 * 3)
-    img_feat = self.img_feat_block2(img_feat)
+    if self.model_type == "clip":
+      with torch.no_grad():
+        img_feat = self.model.encode_image(state)
+        img_feat = img_feat / img_feat.norm(dim=-1, keepdim=True)
+        img_feat = img_feat.float()
+        task_feat = self.model.encode_text(task_vec)
+        task_feat = task_feat / task_feat.norm(dim=-1, keepdim=True)
+        task_feat = task_feat.float()
+    else:
+      img_feat = self.feature_extractor(state)
+      img_feat = self.img_feat_block1(img_feat)
+      img_feat = img_feat.view(-1,256 * 2 * 3)
+      task_feat = F.relu(self.task_feat_block1(task_vec))
 
-    task_feat = F.relu(self.task_feat_block1(task_vec))
+    img_feat = self.img_feat_block2(img_feat)
     task_feat = F.relu(self.task_feat_block2(task_feat))
     task_feat = F.relu(self.task_feat_block3(task_feat))
 

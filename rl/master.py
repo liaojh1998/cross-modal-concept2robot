@@ -57,6 +57,8 @@ class Master(nn.Module):
         nn.ReLU(),
         #nn.BatchNorm2d(256),
       )
+    elif model_type == 'clip':
+      print("WARNING: CLIP is not actually implemented for imitation master.")
     else:
       raise NotImplementedError(f"{model_type} model is not implemented yet")
 
@@ -177,6 +179,8 @@ class Master_F(nn.Module):
         nn.ReLU(),
         #nn.BatchNorm2d(256),
       )
+    elif model_type == 'clip':
+      print("WARNING: CLIP is not actually implemented for imitation master.")
     else:
       raise NotImplementedError(f"{model_type} model is not implemented yet")
 

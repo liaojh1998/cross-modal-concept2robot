@@ -418,7 +418,7 @@ class Agent(object):
         print("WARNING: ignoring restore since actor model could not be found")
 
   def restore_force(self, step, restore_path):
-    print("restore from ", restore_path, " at step ", step)
+    print("restore_force: restore from ", restore_path, " at step ", step)
     save_path_actor = os.path.join(restore_path, 'actor_' + str(step) + '_model.pth.tar')
     self.actor.load_state_dict(torch.load(save_path_actor))
 

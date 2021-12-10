@@ -469,7 +469,10 @@ class Worker(object):
                 else:
                     print("restore_episode",restore_episode)
                     print("restore_path", restore_path)
-                    self.agent.restore_actor(restore_episode, restore_path)
+                    if self.params.force_term:
+                      self.agent.restore_force(restore_episode, restore_path)
+                    else:
+                      self.agent.restore_actor(restore_episode, restore_path)
                     print("testing from restoring sth", restore_path)
 
         if self.params.stage == "demonstration":
@@ -542,7 +545,7 @@ class Worker(object):
                         recordGif = self.params.recordGif
                         if recordGif:
                             #classes = [line.strip().split(":")[0] for line in open('../Languages/labels.txt')]
-                            recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id))
+                            recordGif_dir = os.path.join(self.params.gif_dir, str(self.params.task_id) + '_force' if self.params.force_term else '')
                             if not os.path.exists(recordGif_dir):
                                 os.makedirs(recordGif_dir)
                             imageio.mimsave(os.path.join(recordGif_dir, str(self.params.task_id) + '_' + self.params.model_type + '_' + str(restore_episode) + f'_ep{ep_iter}.gif'),

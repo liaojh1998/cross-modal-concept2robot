@@ -1,6 +1,8 @@
 # Improving Concept2Robot
 This project is done by Jay Liao (jl64465) and Shivang Singh (ss82789) from the University of Texas at Austin for the course [CS 391R: Robot Learning](https://www.cs.utexas.edu/~yukez/cs391r_fall2021/) taught by Professor Yuke Zhu. We aim to improve upon the prior [Concept2Robot](https://github.com/stanford-iprl-lab/Concept2Robot) by incorporating better visual feature and text feature extractors in the agent (actor and critic) instead of ResNet18.
 
+For any inquiries, please email jhliao (at) utexas (dot) edu.
+
 ## Previous Work
 You can find the previous Concept2Robot README at [README_C2R.md](README_C2R.md).
 

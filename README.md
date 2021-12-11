@@ -1,8 +1,11 @@
-# Cross Modal Transformers for Concept2Robot
-Jay Liao (jl64465) and Shivang Singh (ss82789)
+# Improving Concept2Robot
+This project is done by Jay Liao (jl64465) and Shivang Singh (ss82789) from the University of Texas at Austin for the course [CS 391R: Robot Learning](https://www.cs.utexas.edu/~yukez/cs391r_fall2021/) taught by Professor Yuke Zhu. We aim to improve upon the prior [Concept2Robot](https://github.com/stanford-iprl-lab/Concept2Robot) by incorporating better visual feature and text feature extractors in the agent (actor and critic) instead of ResNet18.
 
 ## Previous Work
 You can find the previous Concept2Robot README at [README_C2R.md](README_C2R.md).
+
+## Training and Testing Commands
+Our training and testing commands can be found at `rl/train_scripts/` and `rl/test_scripts/`, respectively. The training and testing code cannot run for now because we did not release the pre-trained video classifiers' model weights provided from authors of the prior Concept2Robot. Please email us about these models if needed.
 
 ## Dataset
 Download the 20bn-something-something-v2 dataset to `data/20bn-something-something-v2` in this repository. The directory should look like:

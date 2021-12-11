@@ -7,6 +7,37 @@ You can find the previous Concept2Robot README at [README_C2R.md](README_C2R.md)
 ## Training and Testing Commands
 Our training and testing commands can be found at `rl/train_scripts/` and `rl/test_scripts/`, respectively. The training and testing code cannot run for now because we did not release the pre-trained video classifiers' model weights provided from authors of the prior Concept2Robot. Please email us about these models if needed.
 
+Here's an example of train run (you need to first `cd rl`):
+```bash
+python3 run.py\
+        --task_id 104\
+        --exp_name "clip"\
+        --model_type clip\
+        --stage train\
+        --recordGif \
+        --force_term \
+        --max_ep 10000\
+        --batch_size 64\
+        --action_penalty 0.2\
+        --start_learning_episode 1000\
+        --task_dim 77\
+        --comment "action_penalty_0.2"
+```
+1. `--task_id 104` correspond to running the single-task agent on Task 104, which, as found in `Languages/labels.txt`, stands for "putting sth behind sth".
+2. `--exp_name "clip"` will save the trained agent to a directory that ends with `clip`. E.g. `save_dir/104_clip`.
+3. `--model_type clip` indicates that you'll use CLIP for feature extraction. You can use `resnet18`, `resnet50`, `virtex`, and `clip` as an argument here.
+4. `--stage train` indicate this is training run.
+5. `--recordGif` will record GIFs of the run for every successful completion of the task.
+6. `--force_term` will make the model predict both the goal pose and the forces at every timestep instead of predicting only the goal pose.
+7. `--max_ep 10000` indicates to run for 10,000 episodes.
+8. `--batch_size 64` will sample 64 trajectories from the replay buffer in DDPG.
+9. `--action_penalty 0.2` is the action penalty applied during training.
+10. `--start_learning_episode 1000` indicates to use random sampled actions instead of actor actions for the first 1000 episodes. These are trajectories stored in the replay buffer that may be useful for provide information on bad trajectories.
+11. `--task_dim 77` is a parameter specific to CLIP, which indicates that CLIP will output 77 tokens as input to the text transformer.
+12. `--comment "action_penalty_0.2"` is just an extra comment that will be used in naming the directory for saves.
+
+These parameters can be modified for the different experiments we did using VirTex, ResNet50, ResNet18, and CLIP.
+
 ## Dataset
 Download the 20bn-something-something-v2 dataset to `data/20bn-something-something-v2` in this repository. The directory should look like:
 ```

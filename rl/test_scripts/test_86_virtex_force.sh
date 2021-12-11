@@ -1,0 +1,13 @@
+python3 run.py \
+        --task_id 86 \
+        --exp_name "virtex" \
+        --model_type virtex \
+        --restore_path /srv/data/cross-modal-concept2robot/save_dir/86_virtex/rl_action_penalty_0.2_2021-12-06_09-54-21/ \
+        --recordGif \
+        --stage test \
+        --batch_size 64 \
+        --action_penalty 0.2 \
+        --force_term \
+        --restore_episode 5000 \
+        --max_ep_test 500 \
+        --comment "action_penalty_0.2"

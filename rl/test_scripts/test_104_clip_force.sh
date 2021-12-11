@@ -1,0 +1,14 @@
+python3 run.py \
+        --task_id 104 \
+        --exp_name "clip" \
+        --model_type clip \
+        --restore_path /srv/data/cross-modal-concept2robot/save_dir/104_clip/rl_action_penalty_0.2_2021-12-10_12-06-57/ \
+        --recordGif \
+        --stage test \
+        --batch_size 64 \
+        --action_penalty 0.2 \
+        --force_term \
+        --restore_episode 5000 \
+        --max_ep_test 500 \
+        --task_dim 77\
+        --comment "action_penalty_0.2"

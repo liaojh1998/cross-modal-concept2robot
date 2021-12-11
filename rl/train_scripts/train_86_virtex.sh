@@ -1,7 +1,7 @@
 python3 run.py\
-        --task_id 42\
-        --exp_name "resnet50"\
-        --model_type resnet50\
+        --task_id 86\
+        --exp_name "virtex"\
+        --model_type virtex\
         --stage train\
         --recordGif \
         --force_term \

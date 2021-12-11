@@ -1,0 +1,13 @@
+python3 run.py \
+        --task_id 104 \
+        --exp_name "resnet50" \
+        --model_type resnet50 \
+        --restore_path /srv/data/cross-modal-concept2robot/save_dir/104_resnet50/rl_action_penalty_0.2_2021-12-01_14-55-38/ \
+        --recordGif \
+        --stage test \
+        --batch_size 64 \
+        --action_penalty 0.2 \
+        --force_term \
+        --restore_episode 6000 \
+        --max_ep_test 500 \
+        --comment "action_penalty_0.2"

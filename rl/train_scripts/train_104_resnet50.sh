@@ -1,5 +1,5 @@
 python3 run.py\
-        --task_id 42\
+        --task_id 104\
         --exp_name "resnet50"\
         --model_type resnet50\
         --stage train\

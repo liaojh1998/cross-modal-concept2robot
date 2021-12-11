@@ -1,12 +1,13 @@
 python3 run.py\
-        --task_id 42\
-        --exp_name "resnet50"\
-        --model_type resnet50\
+        --task_id 104\
+        --exp_name "clip"\
+        --model_type clip\
         --stage train\
         --recordGif \
         --force_term \
-        --max_ep 10000\
+        --max_ep 5000\
         --batch_size 64\
         --action_penalty 0.2\
         --start_learning_episode 1000\
+        --task_dim 77\
         --comment "action_penalty_0.2"
